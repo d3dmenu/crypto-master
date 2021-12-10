@@ -1,0 +1,123 @@
+{
+  "type": "bubble",
+  "direction": "ltr",
+  "size": "kilo",
+  "header": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "%s ",
+            "size": "lg",
+            "align": "start",
+            "weight": "bold",
+            "color": "#04be8c"
+          },
+          {
+            "type": "text",
+            "text": "(%s)",
+            "size": "xs",
+            "weight": "bold",
+            "color": "#909090"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "text": "%s",
+        "size": "3xl",
+        "weight": "bold",
+        "color": "#000000"
+      },
+      {
+        "type": "text",
+        "margin": "xs",
+        "text": "%s",
+        "size": "xs",
+        "weight": "bold",
+        "color": "#404040"
+      },
+      {
+        "type": "text",
+        "text": "%s (GMT+0700)",
+        "size": "xs",
+        "color": "#B2B2B2"
+      }
+    ]
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "separator",
+        "color": "#C3C3C3"
+      },
+      {
+        "type": "box",
+        "layout": "baseline",
+        "margin": "lg",
+        "contents": [
+          {
+            "type": "text",
+            "text": "24h High",
+            "align": "start",
+            "color": "#C3C3C3"
+          },
+          {
+            "type": "text",
+            "text": "%s",
+            "align": "end",
+            "color": "#000000"
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "layout": "baseline",
+        "margin": "lg",
+        "contents": [
+          {
+            "type": "text",
+            "text": "24h Low",
+            "color": "#C3C3C3"
+          },
+          {
+            "type": "text",
+            "text": "%s",
+            "align": "end"
+          }
+        ]
+      },
+      {
+        "type": "separator",
+        "margin": "lg",
+        "color": "#C3C3C3"
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "horizontal",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "text": "View Details",
+        "color": "#04be8c",
+        "margin": "sm",
+        "height": "sm",
+        "action": {
+          "type": "uri",
+          "label": "View Details",
+          "uri": "%s"
+        }
+      }
+    ]
+  }
+}
