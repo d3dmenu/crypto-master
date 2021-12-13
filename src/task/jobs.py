@@ -13,12 +13,13 @@ from src.forex.handle import send_message_type_text
 
 # Setting background scheduler task
 schedule = BackgroundScheduler({'apscheduler.timezone': 'Asia/Bangkok'})
-print(' * Memo SDK version portable 1.3.6')
+print(' * Memo SDK version portable 1.4.6')
 print(' * Setting background scheduler task success.')
 
 
 @schedule.scheduled_job('interval', seconds=settings.DELAY_REQUEST)
 def system_notify_price_coins():
+    print('Scanning schedule job')
     MORETHAN, LESSTHAN = 'More than', 'Less than'
     data = read_collection_firebase()
     quote = {}
@@ -34,7 +35,7 @@ def system_notify_price_coins():
         # Get price server from api or web scraping
         if symbol not in quote:
             quote[symbol] = get_price_only(symbol)
-  
+
         logs = f' * Schedule ID: {uid} is successfully executed.'
         message = f'แจ้งเตือนหมายเลข: {uid}\nเหรียญ: {symbol}\nราคา: {price}'
         if types == MORETHAN and float(price) < float(quote[symbol]):
