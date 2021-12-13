@@ -5,6 +5,7 @@ from src.config.base import coins
 
 
 def get_price_only(symbol: str, url: str = 'https://coinmarketcap.com/th/currencies/') -> float:
+    isalnum = ['$', '฿', ',']
     try:
         if coins[symbol]:
             name = coins[symbol]
@@ -13,8 +14,8 @@ def get_price_only(symbol: str, url: str = 'https://coinmarketcap.com/th/currenc
 
             # Get price currency
             for div in soup.findAll('div', {'class': 'priceValue'}):
-                quote = str(div.text)
-                return float(quote.replace('฿', ''))
+                quote = str(div.text)[1:]
+                return float(quote.replace(',', ''))
 
     except Exception as e:
         return 'The structure of the website has changed.'

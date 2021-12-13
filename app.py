@@ -26,10 +26,10 @@ from linebot.models import (
 )
 from src.task import jobs
 
-# manager-osx
 
 # Channel Access Token
 line_bot_api = LineBotApi(settings.CHANNEL_ACCESS_TOKEN)
+
 # Channel Secret
 handler = WebhookHandler(settings.CHANNEL_SECRET)
 

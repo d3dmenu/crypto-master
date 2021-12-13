@@ -4,6 +4,7 @@ import csv
 import json
 import uuid
 import requests
+import pathlib
 
 from src.functions.reference import *
 from src.config.base import coins
@@ -13,6 +14,26 @@ from src.scraper.handle import get_data_crypto
 from datetime import datetime
 from src.forex import handle
 
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+from firebase import firebase
+
+
+# Change path when deploy on heroku
+def change_path_lib(folder: str) -> str:
+    path = str(pathlib.Path(__file__).parent.resolve())
+    extract = path.split('/')
+    extract[-1] = folder
+    return '/'.join(map(str, extract))
+
+
+# Credentials Firebase SDK
+cred = credentials.Certificate(change_path_lib('config') + '/service_account/AccountKey.json')
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://memo-crypto-bot.firebaseio.com'
+})
+db = firestore.client()
 
 headers_template = ['UID', 'SYMBOL', 'PRICE', 'TYPES', 'STATUS', 'USERID']
 
@@ -22,6 +43,7 @@ def decision(data: dict) -> str:
     temp = data
 
     if intent == GET_QUOTE_CRYPTO:
+
         info = get_coin_name(data['message'])
         if len(info) > 1:
             return 'ระบบการค้นหาหลายเหรียญยังไม่พร้อมใช้งาน\n\nFunction search multiple-coin is not yet available.'
@@ -54,18 +76,13 @@ def decision(data: dict) -> str:
         user_price = get_price_value(data['message'])
         key = uuid.uuid4().hex[:6].upper()
         params = {
-            'UID': key,
             'SYMBOL': symbol[0],
             'PRICE': user_price,
             'TYPES': 'More than',
-            'STATUS': 'Pending',
             'USERID': data['user_id']
         }
-        add_row_csv(params)
-        response = {
-            'flex-mock': get_flex_mock('message_add_schedule.json'),
-            'script': symbol[0]
-        }
+        create_firebase(key, params)
+        print(f' * Added schedule job {key} success.')
         return f'🔰 ระบบแจ้งเตือน\nหมายเลขเตือน: {key}\nประเภท: แจ้งเตือนเมื่อราคาขึ้น\n\nระบบบันทึกการแจ้งเตือนเรียบร้อย'
 
     elif intent == NOTIFY_TYPE_LESS_THAN:
@@ -76,14 +93,13 @@ def decision(data: dict) -> str:
         user_price = get_price_value(data['message'])
         key = uuid.uuid4().hex[:6].upper()
         params = {
-            'UID': key,
             'SYMBOL': symbol[0],
             'PRICE': user_price,
             'TYPES': 'Less than',
-            'STATUS': 'Pending',
             'USERID': data['user_id']
         }
-        add_row_csv(params)
+        create_firebase(key, params)
+        print(f' * Added schedule job {key} success.')
         return f'🔰 ระบบแจ้งเตือน\nหมายเลขเตือน: {key}\nประเภท: แจ้งเตือนเมื่อราคาลง\n\nระบบบันทึกการแจ้งเตือนเรียบร้อย'
 
     elif intent == RESET_NOTIFY:
@@ -258,3 +274,30 @@ def update_row_csv(uid: str):
         # write multiple rows
         writer.writerows(data)
 
+
+def create_firebase(uid: str, data: dict):
+    doc_ref = db.collection(settings.SCHEDULES_COLLECTION).document(uid)
+    doc_ref.set(data)
+
+
+def read_collection_firebase():
+    tasks = db.collection(settings.SCHEDULES_COLLECTION)
+    docs = tasks.stream()
+    return docs
+
+
+def read_collection_with_roles_firebase(key: str, value: str, symbol: str):
+    docs = db.collection(settings.SCHEDULES_COLLECTION).where(key, symbol, value).stream()
+    for doc in docs:
+        stock = doc.to_dict()
+        print(stock.name)
+    return docs.todict()
+
+
+def update_firebase_with_role(document: str, data: dict):
+    doc_ref = db.collection(settings.SCHEDULES_COLLECTION).document(document).update(data)
+    return doc_ref
+
+
+def delete_document_firebase(uid: str):
+    db.collection(settings.SCHEDULES_COLLECTION).document(uid).delete()

@@ -22,7 +22,7 @@ CHANNEL_ACCESS_TOKEN = env.str('CHANNEL_ACCESS_TOKEN',
                                'c507YkAdo2ZuDCuGleZsrgNBFTpXSqXOPyngcTVbRgwfZdM69ve8CtT2d+TLHL3fZV7w+sa69kiDNWiu54cYHRk9wqJHVjRTpWZmBKtM3tLRmSJv1UR2W3i3/tc5SuYJPFk1Q31YG7PGzGDUMtH7SQdB04t89/1O/w1cDnyilFU=')
 
 # Settings delay for request api
-DELAY_REQUEST = env.int('DELAY_REQUEST', 10)
+DELAY_REQUEST = env.int('DELAY_REQUEST', 60)
 DELAY_FOREX = env.int('DELAY_FOREX', 5)
 # Load task from csv
 DATABASE = env.str('DATABASE', 'schedules.csv')
@@ -35,3 +35,6 @@ CURRENCY = [
     'AUDCAD', 'AUDJPY', 'AUDUSD', 'EURAUD', 'EURCAD', 'EURBGP', 'EURJPY', 'EURUSD',
     'GBPAUD', 'GBPCAD', 'GBPJPY', 'USDJPY', 'NZDUSD'
 ]
+
+# Firebase SDK
+SCHEDULES_COLLECTION = env.str('SCHEDULES_COLLECTION', 'schedules')
