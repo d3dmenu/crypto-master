@@ -12,12 +12,12 @@ from src.functions.utils import read_collection_firebase, delete_document_fireba
 from src.forex.handle import send_message_type_text
 
 # Setting background scheduler task
-schedule = BackgroundScheduler({'apscheduler.timezone': 'Asia/Bangkok'})
+sched = BackgroundScheduler({'apscheduler.timezone': 'Asia/Bangkok'})
 print(' * Memo SDK version portable 1.4.6')
 print(' * Setting background scheduler task success.')
 
 
-@schedule.scheduled_job('interval', seconds=settings.DELAY_REQUEST)
+@sched.scheduled_job('interval', seconds=settings.DELAY_REQUEST)
 def system_notify_price_coins():
     print('Scanning schedule job')
     MORETHAN, LESSTHAN = 'More than', 'Less than'
@@ -47,5 +47,7 @@ def system_notify_price_coins():
             print(logs)
             send_message_type_text(message)
             delete_document_firebase(uid)
+
+sched.start()
 # Shut down the scheduler when exiting the app
 # atexit.register(lambda: schedule.shutdown())
