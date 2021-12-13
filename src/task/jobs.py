@@ -48,6 +48,5 @@ def system_notify_price_coins():
             send_message_type_text(message)
             delete_document_firebase(uid)
 
-sched.start()
 # Shut down the scheduler when exiting the app
 # atexit.register(lambda: schedule.shutdown())
