@@ -23,9 +23,8 @@ def system_notify_price_coins():
     MORETHAN, LESSTHAN = 'More than', 'Less than'
     data = read_collection_firebase()
     quote = {}
-    print(quote, len(quote))
     for doc in data:
-
+        print(doc.id)
         uid = doc.id
         info = doc.to_dict()
 
