@@ -1,10 +1,7 @@
 #!/usr/bin/python
 
 # Schedule Library imported
-import asyncio
-import os
-import csv
-# import atexit
+import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 from src.scraper.handle import get_price_only
 from src.config import settings
@@ -19,7 +16,6 @@ print(' * Setting background scheduler task success.')
 
 @sched.scheduled_job('interval', seconds=settings.DELAY_REQUEST)
 def system_notify_price_coins():
-    print(' * Scanning schedule job')
     MORETHAN, LESSTHAN = 'More than', 'Less than'
     data = read_collection_firebase()
     quote = {}
@@ -50,4 +46,4 @@ def system_notify_price_coins():
 
 
 # Shut down the scheduler when exiting the app
-# atexit.register(lambda: schedule.shutdown())
+atexit.register(lambda: sched.shutdown())
