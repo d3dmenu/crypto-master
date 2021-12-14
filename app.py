@@ -14,14 +14,9 @@
 
 import json
 import logging
-import atexit
 
-from flask import Flask, request
+from flask import Flask, request, abort
 from src.functions.utils import extract_data, decision, settings
-from apscheduler.schedulers.background import BackgroundScheduler
-from src.functions.utils import read_collection_firebase, delete_document_firebase
-from src.forex.handle import send_message_type_text
-from src.scraper.handle import get_price_only
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -29,48 +24,7 @@ from linebot import (
 from linebot.models import (
     FlexSendMessage, TextSendMessage,
 )
-
-print(' * Memo SDK version portable 1.8.6')
-print(' * Setting background scheduler task success.')
-
-
-# Schedules tasks
-def system_notify_price_coins():
-    MORETHAN, LESSTHAN = 'More than', 'Less than'
-    data = read_collection_firebase()
-    quote = {}
-    for doc in data:
-
-        uid = doc.id
-        info = doc.to_dict()
-
-        price = info['PRICE']
-        types = info['TYPES']
-        symbol = info['SYMBOL'].upper()
-
-        # Get price server from api or web scraping
-        if symbol not in quote:
-            quote[symbol] = get_price_only(symbol)
-
-        logs = f' * Schedule ID: {uid} is successfully executed.'
-        message = f'แจ้งเตือนหมายเลข: {uid}\nเหรียญ: {symbol}\nราคา: {price}'
-        if types == MORETHAN and float(price) < float(quote[symbol]):
-            print(logs)
-            send_message_type_text(message)
-            delete_document_firebase(uid)
-
-        elif type == LESSTHAN and float(price) > float(quote[symbol]):
-            print(logs)
-            send_message_type_text(message)
-            delete_document_firebase(uid)
-
-
-sched = BackgroundScheduler({'apscheduler.timezone': 'Asia/Bangkok'}, daemon=True)
-sched.add_job(system_notify_price_coins, 'interval', minutes=settings.DELAY_REQUEST)
-sched.start()
-
-# Shutdown your cron thread if the web process is stopped
-atexit.register(lambda: sched.shutdown(wait=False))
+from src.task.jobs import sched
 
 # Channel Access Token
 line_bot_api = LineBotApi(settings.CHANNEL_ACCESS_TOKEN)
@@ -116,5 +70,6 @@ def reply_message(response: dict or str, reply_token: str):
 
 
 if __name__ == '__main__':
+    sched.start()
     print(' * Service schedule started')
-    app.run(debug=False, use_reloader=True)
+    app.run(debug=False, use_reloader=False)
