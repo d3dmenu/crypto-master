@@ -24,7 +24,7 @@ def system_notify_price_coins():
     data = read_collection_firebase()
     quote = {}
     for doc in data:
-        print(doc.id)
+
         uid = doc.id
         info = doc.to_dict()
 
@@ -48,8 +48,6 @@ def system_notify_price_coins():
             send_message_type_text(message)
             delete_document_firebase(uid)
 
-
-sched.start()
 
 # Shut down the scheduler when exiting the app
 # atexit.register(lambda: schedule.shutdown())

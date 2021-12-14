@@ -70,4 +70,6 @@ def reply_message(response: dict or str, reply_token: str):
 
 
 if __name__ == '__main__':
+    sched.start()
+    print(' * Service schedule started')
     app.run(debug=False)
