@@ -5,23 +5,25 @@ import asyncio
 import os
 import csv
 # import atexit
-from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from src.scraper.handle import get_price_only
 from src.config import settings
 from src.functions.utils import read_collection_firebase, delete_document_firebase
 from src.forex.handle import send_message_type_text
 
 # Setting background scheduler task
-sched = BlockingScheduler({'apscheduler.timezone': 'Asia/Bangkok'})
+sched = BackgroundScheduler({'apscheduler.timezone': 'Asia/Bangkok'})
 print(' * Memo SDK version portable 1.4.6')
 print(' * Setting background scheduler task success.')
 
 
 @sched.scheduled_job('interval', seconds=settings.DELAY_REQUEST)
 def system_notify_price_coins():
+    print(' * Scanning schedule job')
     MORETHAN, LESSTHAN = 'More than', 'Less than'
     data = read_collection_firebase()
     quote = {}
+    print(quote, len(quote))
     for doc in data:
 
         uid = doc.id
