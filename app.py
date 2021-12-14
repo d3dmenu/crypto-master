@@ -29,7 +29,7 @@ from linebot.models import (
     FlexSendMessage, TextSendMessage,
 )
 
-print(' * Memo SDK version portable 1.4.6')
+print(' * Memo SDK version portable 1.6.6')
 print(' * Setting background scheduler task success.')
 
 
