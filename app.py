@@ -24,7 +24,7 @@ from linebot import (
 from linebot.models import (
     FlexSendMessage, TextSendMessage,
 )
-
+from src.task.jobs import sched
 
 # Channel Access Token
 line_bot_api = LineBotApi(settings.CHANNEL_ACCESS_TOKEN)
@@ -70,4 +70,6 @@ def reply_message(response: dict or str, reply_token: str):
 
 
 if __name__ == '__main__':
+    sched.start()
+    print(' * Service schedule started')
     app.run(debug=False)
