@@ -16,7 +16,61 @@ CURRENCY = [
 ]
 
 
-async def get_data_from_trading_view(c: str, t: str):
+async def get_multiple_data_from_trading_view(time: str):
+    list_currency = list()
+    for name in CURRENCY:
+        name = f"FX_IDC:{name}"
+        list_currency.append(name)
+
+    headers = {'Content-type': 'application/json', 'User-Agent': 'PostmanRuntime/7.28.4'}
+    object = {"symbols": {"tickers": list_currency, f"query": {"types": ["forex"]}},
+              "columns": [f"Recommend.Other|{time}", f"Recommend.All|{time}", f"Recommend.MA|{time}", f"RSI|{time}",
+                          f"RSI[1]|{time}",
+                          f"Stoch.K|{time}", f"Stoch.D|{time}", f"Stoch.K[1]|{time}", f"Stoch.D[1]|{time}",
+                          f"CCI20|{time}",
+                          f"CCI20[1]|{time}",
+                          f"ADX|{time}", f"ADX+DI|{time}", f"ADX-DI|{time}", f"ADX+DI[1]|{time}", f"ADX-DI[1]|{time}",
+                          f"AO|{time}",
+                          f"AO[1]|{time}",
+                          f"Stoch.RSI.K|{time}", f"Rec.WR|{time}", f"W.R|{time}", f"Rec.BBPower|{time}",
+                          f"BBPower|{time}",
+                          f"Rec.UO|{time}", f"UO|{time}",
+                          f"EMA10|{time}", f"close|{time}", f"SMA10|{time}", f"EMA20|{time}", f"SMA20|{time}",
+                          f"EMA30|{time}",
+                          f"SMA30|{time}",
+                          f"EMA50|{time}", f"SMA50|{time}", f"EMA100|{time}", f"SMA100|{time}", f"EMA200|{time}",
+                          f"SMA200|{time}",
+                          f"Rec.Ichimoku|{time}",
+                          f"Ichimoku.BLine|{time}", f"Rec.VWMA|{time}", f"VWMA|{time}", f"Rec.HullMA9|{time}",
+                          f"HullMA9|{time}",
+                          f"Pivot.M.Classic.S3|{time}", f"Pivot.M.Classic.S2|{time}", f"Pivot.M.Classic.S1|{time}",
+                          f"Pivot.M.Classic.Middle|{time}", f"Pivot.M.Classic.R1|{time}", f"Pivot.M.Classic.R2|{time}",
+                          f"Pivot.M.Classic.R3|{time}", f"Pivot.M.Fibonacci.S3|{time}", f"Pivot.M.Fibonacci.S2|{time}",
+                          f"Pivot.M.Fibonacci.S1|{time}", f"Pivot.M.Fibonacci.Middle|{time}",
+                          f"Pivot.M.Fibonacci.R1|{time}",
+                          f"Pivot.M.Fibonacci.R2|{time}", f"Pivot.M.Fibonacci.R3|{time}",
+                          f"Pivot.M.Camarilla.S3|{time}",
+                          f"Pivot.M.Camarilla.S2|{time}", f"Pivot.M.Camarilla.S1|{time}",
+                          f"Pivot.M.Camarilla.Middle|{time}",
+                          f"Pivot.M.Camarilla.R1|{time}", f"Pivot.M.Camarilla.R2|{time}",
+                          f"Pivot.M.Camarilla.R3|{time}",
+                          f"Pivot.M.Woodie.S3|{time}", f"Pivot.M.Woodie.S2|{time}", f"Pivot.M.Woodie.S1|{time}",
+                          f"Pivot.M.Woodie.Middle|{time}", f"Pivot.M.Woodie.R1|{time}", f"Pivot.M.Woodie.R2|{time}",
+                          f"Pivot.M.Woodie.R3|{time}", f"Pivot.M.Demark.S1|{time}", f"Pivot.M.Demark.Middle|{time}",
+                          f"Pivot.M.Demark.R1|{time}"]}
+
+    r = requests.post(url, data=json.dumps(object), headers=headers)
+    res = json.loads(r.text)
+
+    # get data currency and rsi indicator
+    indicator = res['data']
+    for _object in indicator:
+        rsi = _object['d'][3]
+        currency = str(_object['s']).replace('FX_IDC:', '')
+        data.append({'currency': currency, 'timeframe': time, 'rsi': rsi})
+
+
+async def get_single_data_from_trading_view(c: str, t: str):
     headers = {'Content-type': 'application/json', 'User-Agent': 'PostmanRuntime/7.28.4'}
     object = {"symbols": {"tickers": [f"FX_IDC:{c}"], f"query": {"types": ["forex"]}},
               "columns": [f"Recommend.Other|{t}", f"Recommend.All|{t}", f"Recommend.MA|{t}", f"RSI|{t}", f"RSI[1]|{t}",
@@ -52,13 +106,14 @@ async def get_data_from_trading_view(c: str, t: str):
 
 async def main():
     coroutine = []
-    for currency in CURRENCY:
-        coroutine.append(get_data_from_trading_view(currency, 5))
-        coroutine.append(get_data_from_trading_view(currency, 15))
-        coroutine.append(get_data_from_trading_view(currency, 30))
-        coroutine.append(get_data_from_trading_view(currency, 60))
-        coroutine.append(get_data_from_trading_view(currency, 120))
-        coroutine.append(get_data_from_trading_view(currency, 240))
+
+    coroutine.append(get_multiple_data_from_trading_view(5))
+    coroutine.append(get_multiple_data_from_trading_view(15))
+    coroutine.append(get_multiple_data_from_trading_view(30))
+    coroutine.append(get_multiple_data_from_trading_view(60))
+    coroutine.append(get_multiple_data_from_trading_view(120))
+    coroutine.append(get_multiple_data_from_trading_view(240))
+
     results = await asyncio.wait(coroutine)
 
     print(f' * There are found total of {len(data)} currency pairs for scan during each period.')
@@ -72,13 +127,13 @@ async def main():
     today = datetime.now(tz=pytz.timezone('Asia/Bangkok'))
     timestamp: str = today.strftime("%d.%m.%Y %H:%M")
     script = f'📣Signal {timestamp}'
-    if len(data):
+    if len(notify):
         for ins in _filter:
             script += f'\n✅{ins["currency"]} | {second_to_time_frame(ins["timeframe"])} | {"%.2f" % float(ins["rsi"])}'
         script += f'\n\n📈พบคู่เงินน่าสนใจ {len(_filter)} รายการ'
         send_message_type_text(script)
     else:
-        script = 'In these 5 minutes, there are no pairs to buy.'
+        script = '🔴 ผลการแสกนระบบตรวจไม่พบคู่เงินทัี่มีแนวโน้มกลับตัวครับ'
         send_message_type_text(script)
 
 
@@ -95,10 +150,10 @@ def run():
 
 def send_message_type_text(text: str):
     script = {
-        "messages":[
+        "messages": [
             {
-              "type": "text",
-              "text": text
+                "type": "text",
+                "text": text
             }
         ]
     }
