@@ -10,7 +10,7 @@ from src.forex.handle import send_message_type_text
 
 # Setting background scheduler task
 sched = BackgroundScheduler({'apscheduler.timezone': 'Asia/Bangkok'})
-print(' * Memo SDK version portable 1.7.6')
+print(' * Memo SDK version portable 2.1.6')
 print(' * Setting background scheduler task success.')
 
 
