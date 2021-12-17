@@ -1,4 +1,5 @@
 import pytz
+import random
 import json
 import asyncio
 import requests
@@ -104,7 +105,16 @@ async def get_single_data_from_trading_view(c: str, t: str):
     data.append({'currency': c, 'timeframe': t, 'rsi': rsi})
 
 
+def custom_message() -> str:
+    return settings.CUSTOM_MESSAGE[random.randint(0, 6)]
+
+
 async def main():
+    global data, notify
+    data = list()
+    notify = list()
+
+    send_message_type_text(custom_message)
     coroutine = []
 
     coroutine.append(get_multiple_data_from_trading_view(5))
