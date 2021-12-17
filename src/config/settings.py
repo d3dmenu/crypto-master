@@ -38,3 +38,12 @@ CURRENCY = [
 
 # Firebase SDK
 SCHEDULES_COLLECTION = env.str('SCHEDULES_COLLECTION', 'schedules')
+
+
+# Customize Message from python
+# Because the delivery of messages in dialogflow is a little delayed, python is utilized instead.
+CUSTOM_MESSAGE = [
+    'ระบบกำลังประมวล รอสักครู่ครับ', 'กรุณารอสักครู่ ระบบใช้เวลาไม่เกิน 1 นาที', 'ระบบกำลังประมวลผลคู่เงินทุก Timeframe ใช้เวลาไม่เกิน 1 นาทีครับ',
+    'รอสักครู่ครับ กำลังวิเคราะห์คู่เงิน เมื่อพร้อมแล้วจะส่งลิสต์ข้อมูลให้ครับ', 'กรุณารอสักครู่ ระบบใช้เวลา 1 นาที ในการวิเคราะห์คู่เงินที่มี Volume เทรดสูงมาให้ท่านอยู่',
+    'กรุณารอสักครู่ ระบบกำลังประมวลผลคู่เงิน', 'ได้ครับ รอระบบประมวลผลสักครู่นะครับ'
+]
