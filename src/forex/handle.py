@@ -106,15 +106,11 @@ async def get_single_data_from_trading_view(c: str, t: str):
 
 
 def custom_message() -> str:
-    return settings.CUSTOM_MESSAGE[random.randint(0, 6)]
+    return str(settings.CUSTOM_MESSAGE[random.randint(0, 6)])
 
 
 async def main():
-    global data, notify
-    data = list()
-    notify = list()
-
-    send_message_type_text(custom_message)
+    send_message_type_text(custom_message())
     coroutine = []
 
     coroutine.append(get_multiple_data_from_trading_view(5))
@@ -143,7 +139,7 @@ async def main():
         script += f'\n\n📈พบคู่เงินน่าสนใจ {len(_filter)} รายการ'
         send_message_type_text(script)
     else:
-        script = '🔴 ผลการแสกนระบบตรวจไม่พบคู่เงินทัี่มีแนวโน้มกลับตัวครับ'
+        script = '📈📉ระบบแสกนคู่เงิน\nผลการแสกนระบบตรวจไม่พบคู่เงินที่มีแนวโน้มกลับตัวครับ'
         send_message_type_text(script)
 
 
